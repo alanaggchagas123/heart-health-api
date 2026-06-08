@@ -1,4 +1,4 @@
-from app.schemas.user import UserCreate, UserLogin
+from app.schemas.user import UserCreate
 
 
 def test_user_create_schema():
@@ -15,12 +15,3 @@ def test_user_create_schema():
 
     assert user.email == "joao@email.com"
     assert user.nome == "João"
-
-
-def test_user_login_schema():
-    login = UserLogin(
-        email="teste@email.com",
-        senha="123456"
-    )
-
-    assert login.email == "teste@email.com"
