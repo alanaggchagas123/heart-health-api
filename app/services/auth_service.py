@@ -1,5 +1,17 @@
 from app.database import SessionLocal
 from app.models.user import User
+import bcrypt
+
+
+# ----------------------------
+# HASH
+# ----------------------------
+def hash_password(password: str):
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+
+def verify_password(password: str, hashed: str):
+    return bcrypt.checkpw(password.encode(), hashed.encode())
 
 
 # ----------------------------
@@ -8,13 +20,12 @@ from app.models.user import User
 def register_user(user):
     db = SessionLocal()
 
-    # cria usuário no banco
     new_user = User(
         nome=user.nome,
         sobrenome=user.sobrenome,
         email=user.email,
         telefone=user.telefone,
-        senha=user.senha,
+        senha=hash_password(user.senha),  # ✔ aqui corrigido
         data_nascimento=user.data_nascimento,
         sexo=user.sexo,
         pais=user.pais
@@ -23,7 +34,6 @@ def register_user(user):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-
     db.close()
 
     return new_user
@@ -37,12 +47,14 @@ def login_user(email, senha):
 
     user = db.query(User).filter(User.email == email).first()
 
-    db.close()
-
     if not user:
+        db.close()
         return None, "Usuário não encontrado"
 
-    if user.senha != senha:
-        return None, "Senha inválida"
+    if not verify_password(senha, user.senha):
+        db.close()
+        return None, "Senha incorreta"
+
+    db.close()
 
     return user, "Login realizado com sucesso"
