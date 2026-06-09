@@ -14,6 +14,8 @@ class SymptomsSchema(BaseModel):
 
 
 class HeartHealthCreate(BaseModel):
+    userId: int
+    
     bloodPressure: BloodPressureSchema
     heartRate: int
     bloodOxygenLevel: float

@@ -25,7 +25,7 @@ def register_user(user):
         sobrenome=user.sobrenome,
         email=user.email,
         telefone=user.telefone,
-        senha=hash_password(user.senha),  # ✔ aqui corrigido
+        senha=hash_password(user.senha),
         data_nascimento=user.data_nascimento,
         sexo=user.sexo,
         pais=user.pais

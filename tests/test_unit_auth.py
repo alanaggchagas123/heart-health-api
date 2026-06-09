@@ -1,6 +1,5 @@
 from app.schemas.user import UserCreate
 
-
 def test_user_create_schema():
     user = UserCreate(
         nome="João",
