@@ -7,10 +7,7 @@ router = APIRouter()
 
 @router.post("/heartHealth")
 def create_heart_health(data: HeartHealthCreate):
-    record = create_record(
-        data=data,
-        user_id=1  # temporário
-    )
+    record = create_record(data)
 
     return {
         "id": record.id,

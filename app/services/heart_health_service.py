@@ -2,11 +2,11 @@ from app.database import SessionLocal
 from app.models.heart_health import HeartHealthRecord
 
 
-def create_record(data, user_id):
+def create_record(data):
     db = SessionLocal()
 
     new_record = HeartHealthRecord(
-        user_id=user_id,
+        user_id=data.userId,
 
         systolic=data.bloodPressure.systolic,
         diastolic=data.bloodPressure.diastolic,

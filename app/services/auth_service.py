@@ -1,22 +1,9 @@
 from app.database import SessionLocal
 from app.models.user import User
-import bcrypt
+from app.utils.security import hash_password, verify_password
 
 
-# ----------------------------
-# HASH
-# ----------------------------
-def hash_password(password: str):
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
-
-def verify_password(password: str, hashed: str):
-    return bcrypt.checkpw(password.encode(), hashed.encode())
-
-
-# ----------------------------
 # REGISTER
-# ----------------------------
 def register_user(user):
     db = SessionLocal()
 
@@ -38,10 +25,7 @@ def register_user(user):
 
     return new_user
 
-
-# ----------------------------
 # LOGIN
-# ----------------------------
 def login_user(email, senha):
     db = SessionLocal()
 

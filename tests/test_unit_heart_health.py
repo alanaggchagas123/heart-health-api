@@ -3,6 +3,7 @@ from app.schemas.heart_health import HeartHealthCreate
 
 def test_heart_health_schema():
     record = HeartHealthCreate(
+        userId=1,
         bloodPressure={
             "systolic": 120,
             "diastolic": 80
