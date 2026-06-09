@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.schemas.user import UserCreate, UserLogin, UserResponse
 from app.services.auth_service import register_user, login_user
+from app.utils.security import create_access_token
 
 router = APIRouter()
 
@@ -17,10 +18,14 @@ def login(user: UserLogin):
     if not db_user:
         return {"error": message}
 
+    token = create_access_token({
+        "sub": db_user["email"],
+        "id": db_user["id"]
+    })
+
     return {
         "message": message,
-        "user": {
-            "id": db_user.id,
-            "email": db_user.email
-        }
+        "access_token": token,
+        "token_type": "bearer",
+        "user": db_user
     }

@@ -39,6 +39,12 @@ def login_user(email, senha):
         db.close()
         return None, "Senha incorreta"
 
+    user_data = {
+        "id": user.id,
+        "nome": user.nome,
+        "email": user.email
+    }
+
     db.close()
 
-    return user, "Login realizado com sucesso"
+    return user_data, "Login realizado com sucesso"
