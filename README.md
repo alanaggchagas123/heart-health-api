@@ -2,7 +2,7 @@
 
 ## Arquitetura
 
-O projeto foi desenvolvido utilizando FastAPI e segue uma arquitetura modular dividida em camadas.
+O projeto foi desenvolvido utilizando FastAPI, um framework web de criação de APIs com Python, e segue uma arquitetura modular dividida em camadas.
 
 ### Estrutura
 
@@ -89,3 +89,57 @@ Resultado esperado:
 ```text
 13 passed
 ```
+
+## Acessando a documentação da API (Swagger UI)
+
+> **Observação:** este tutorial foi elaborado considerando o uso do Visual Studio Code (VS Code) como ambiente de desenvolvimento. Caso utilize outro editor, os passos podem variar.
+
+Para visualizar a documentação da API e testar seus endpoints de forma interativa através do **Swagger UI**, siga as instruções abaixo:
+
+1. Faça o download do arquivo `.zip` e extraia seu conteúdo em uma pasta de sua preferência.
+
+2. Abra o **Visual Studio Code** e selecione a pasta do projeto.
+
+3. No VS Code, acesse **Terminal > New Terminal** para abrir um novo terminal na raiz do projeto.
+
+4. Crie e ative um ambiente virtual (recomendado)
+
+  4.1. Crie o ambiente virtual:
+
+```bash
+python -m venv venv
+```
+
+  4.2. Ative o ambiente virtual:
+
+**Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+**Linux/macOS**
+
+```bash
+source venv/bin/activate
+```
+
+5. Execute o comando abaixo para instalar todas as dependências listadas no arquivo `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+6. Com as dependências instaladas, execute o seguinte comando para inicilizar a aplicação:
+
+```bash
+uvicorn main:app --reload
+```
+
+7. Abra o navegador de sua preferência e acesse:
+
+```text
+http://localhost:8000/docs
+```
+
+Com isso, você terá acesso ao Swagger UI, onde poderá consultar a documentação da API e testar os endpoints diretamente pelo navegador.
