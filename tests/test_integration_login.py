@@ -2,8 +2,10 @@ from fastapi.testclient import TestClient
 from jose import jwt
 from main import app
 import time
+import os
 
 client = TestClient(app)
+
 
 def test_login():
     email = f"login_{int(time.time())}@email.com"
@@ -14,6 +16,7 @@ def test_login():
         "email": email,
         "telefone": "21999999999",
         "senha": "123456",
+        "confirmar_senha": "123456",
         "data_nascimento": "2000-01-01",
         "sexo": "M",
         "pais": "Brasil"
@@ -27,12 +30,11 @@ def test_login():
     assert response.status_code == 200
 
     data = response.json()
-
     token = data["access_token"]
 
     payload = jwt.decode(
         token,
-        "heart-health-secret-key",
+        os.getenv("SECRET_KEY"),
         algorithms=["HS256"]
     )
 

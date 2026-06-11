@@ -18,11 +18,15 @@ def test_heart_health_schema():
         }
     )
 
+    assert record.userId == 1
+
     assert record.bloodPressure.systolic == 120
     assert record.bloodPressure.diastolic == 80
+
     assert record.heartRate == 70
     assert record.bloodOxygenLevel == 0.97
     assert record.bodyWeight == 65.4
+
     assert record.symptoms.shortnessOfBreath is False
     assert record.symptoms.chestPain is False
     assert record.symptoms.dizziness is False

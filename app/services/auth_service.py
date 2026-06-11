@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from app.database import SessionLocal
 from app.models.user import User
 from app.utils.security import hash_password, verify_password
@@ -6,45 +8,63 @@ from app.utils.security import hash_password, verify_password
 # REGISTER
 def register_user(user):
     db = SessionLocal()
+    try:
+        existing_user = (
+            db.query(User)
+            .filter(User.email == user.email)
+            .first()
+        )
 
-    new_user = User(
-        nome=user.nome,
-        sobrenome=user.sobrenome,
-        email=user.email,
-        telefone=user.telefone,
-        senha=hash_password(user.senha),
-        data_nascimento=user.data_nascimento,
-        sexo=user.sexo,
-        pais=user.pais
-    )
+        if existing_user:
+            raise HTTPException(
+                status_code=409,
+                detail="Usuário já cadastrado"
+            )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    db.close()
+        new_user = User(
+            nome=user.nome,
+            sobrenome=user.sobrenome,
+            email=user.email,
+            telefone=user.telefone,
+            senha=hash_password(user.senha),
+            data_nascimento=user.data_nascimento,
+            sexo=user.sexo,
+            pais=user.pais
+        )
 
-    return new_user
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+
+        return new_user
+
+    finally:
+        db.close()
+
 
 # LOGIN
 def login_user(email, senha):
     db = SessionLocal()
+    try:
+        user = (
+            db.query(User)
+            .filter(User.email == email)
+            .first()
+        )
 
-    user = db.query(User).filter(User.email == email).first()
+        if not user:
+            return None, "Usuário não encontrado"
 
-    if not user:
+        if not verify_password(senha, user.senha):
+            return None, "Senha incorreta"
+
+        user_data = {
+            "id": user.id,
+            "nome": user.nome,
+            "email": user.email
+        }
+
+        return user_data, "Login realizado com sucesso"
+
+    finally:
         db.close()
-        return None, "Usuário não encontrado"
-
-    if not verify_password(senha, user.senha):
-        db.close()
-        return None, "Senha incorreta"
-
-    user_data = {
-        "id": user.id,
-        "nome": user.nome,
-        "email": user.email
-    }
-
-    db.close()
-
-    return user_data, "Login realizado com sucesso"
