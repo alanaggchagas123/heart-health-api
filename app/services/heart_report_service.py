@@ -20,6 +20,7 @@ def generate_heart_report(
             .filter(HeartHealthRecord.user_id == user_id)
             .filter(HeartHealthRecord.created_at >= start_date)
             .filter(HeartHealthRecord.created_at <= end_date)
+            .order_by(HeartHealthRecord.created_at.asc())
             .all()
         )
 
@@ -34,72 +35,105 @@ def generate_heart_report(
         blood_oxygen_history = []
         body_weight_history = []
 
-        # Fix #6: acumula todos os alertas em vez de sobrescrever com elif
         risk_alerts: List[str] = []
 
         for record in records:
-            record_date = record.created_at.date()
 
             blood_pressure_history.append({
+                "recordId": record.id,
                 "systolic": record.systolic,
                 "diastolic": record.diastolic,
-                "date": record_date
+                "date": record.created_at.strftime("%Y-%m-%d"),
+                "time": record.created_at.strftime("%H:%M:%S"),
+                "datetime": record.created_at.isoformat()
             })
 
             heart_rate_history.append({
+                "recordId": record.id,
                 "value": record.heart_rate,
-                "date": record_date
+                "date": record.created_at.strftime("%Y-%m-%d"),
+                "time": record.created_at.strftime("%H:%M:%S"),
+                "datetime": record.created_at.isoformat()
             })
 
             blood_oxygen_history.append({
+                "recordId": record.id,
                 "value": record.blood_oxygen_level,
-                "date": record_date
+                "date": record.created_at.strftime("%Y-%m-%d"),
+                "time": record.created_at.strftime("%H:%M:%S"),
+                "datetime": record.created_at.isoformat()
             })
 
             body_weight_history.append({
+                "recordId": record.id,
                 "value": record.body_weight,
-                "date": record_date
+                "date": record.created_at.strftime("%Y-%m-%d"),
+                "time": record.created_at.strftime("%H:%M:%S"),
+                "datetime": record.created_at.isoformat()
             })
 
-            # Fix #6: checagens independentes (sem elif) + Fix #9: inclui sintomas
             if record.systolic > 130:
-                risk_alerts.append("pressão arterial acima do normal")
+                risk_alerts.append(
+                    "pressão arterial acima do normal"
+                )
 
             if record.heart_rate > 100:
-                risk_alerts.append("frequência cardíaca elevada")
+                risk_alerts.append(
+                    "frequência cardíaca elevada"
+                )
 
             if record.blood_oxygen_level < 0.95:
-                risk_alerts.append("nível de oxigenação abaixo do ideal")
+                risk_alerts.append(
+                    "nível de oxigenação abaixo do ideal"
+                )
 
             if record.chest_pain:
-                risk_alerts.append("dor no peito relatada")
+                risk_alerts.append(
+                    "dor no peito relatada"
+                )
 
             if record.shortness_of_breath:
-                risk_alerts.append("falta de ar relatada")
+                risk_alerts.append(
+                    "falta de ar relatada"
+                )
 
             if record.dizziness:
-                risk_alerts.append("tontura relatada")
+                risk_alerts.append(
+                    "tontura relatada"
+                )
 
-        # Remove duplicatas mantendo a ordem
         seen = set()
         unique_alerts = []
+
         for alert in risk_alerts:
             if alert not in seen:
                 seen.add(alert)
                 unique_alerts.append(alert)
 
-        risk_alert = ", ".join(unique_alerts) if unique_alerts else "nenhum risco identificado"
+        risk_alert = (
+            ", ".join(unique_alerts)
+            if unique_alerts
+            else "nenhum risco identificado"
+        )
 
         return {
             "id": user_id,
+
+            "totalRecords": len(records),
+
             "reportPeriod": {
                 "startDate": start_date,
                 "endDate": end_date
             },
+
             "bloodPressureHistory": blood_pressure_history,
+
             "heartRateHistory": heart_rate_history,
+
             "bloodOxygenHistory": blood_oxygen_history,
+
             "bodyWeightHistory": body_weight_history,
+
             "riskAlert": risk_alert
         }
 

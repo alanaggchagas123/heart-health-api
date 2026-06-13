@@ -8,6 +8,7 @@ from app.utils.security import hash_password, verify_password
 # REGISTER
 def register_user(user):
     db = SessionLocal()
+
     try:
         existing_user = (
             db.query(User)
@@ -45,6 +46,7 @@ def register_user(user):
 # LOGIN
 def login_user(email, senha):
     db = SessionLocal()
+
     try:
         user = (
             db.query(User)
@@ -61,7 +63,12 @@ def login_user(email, senha):
         user_data = {
             "id": user.id,
             "nome": user.nome,
-            "email": user.email
+            "sobrenome": user.sobrenome,
+            "email": user.email,
+            "telefone": user.telefone,
+            "data_nascimento": user.data_nascimento,
+            "sexo": user.sexo,
+            "pais": user.pais
         }
 
         return user_data, "Login realizado com sucesso"
