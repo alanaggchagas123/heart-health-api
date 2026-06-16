@@ -14,7 +14,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
+        "https://heart-health-api.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
